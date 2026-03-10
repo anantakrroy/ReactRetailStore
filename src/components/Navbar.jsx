@@ -3,54 +3,50 @@ import { useAuth } from "../features/auth/useAuth";
 import { useCart } from "../features/cart/useCart";
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
+  const { state } = useCart();
 
-    const auth = useAuth();
-    const cart = useCart();
-    console.log("AuthContext value:", auth);
-    console.log("CartContext value:", cart);
-    const { user, logout } = auth;
-    const { state } = cart;
+  const itemCount = state.items.reduce((total, item) => {
+    return total + item.quantity;
+  }, 0);
 
-    const itemCount = state.items.reduce((total, item) => {
-        return total + item.quantity;
-    }, 0);
+  return (
+    <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center shadow">
+      <div className="flex gap-6 items-center">
+        <Link to="/" className="text-xl font-bold">
+          React Store
+        </Link>
 
-    return (
-        <nav
-            style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "15px",
-                borderBottom: "1px solid #ccc",
-            }}
-        >
-            <div>
-                <Link to="/" style={{ marginRight: "15px" }}>
-                    Home
-                </Link>
+        <Link to="/" className="hover:text-gray-300">
+          Products
+        </Link>
 
-                <Link to="/cart">
-                    Cart ({itemCount})
-                </Link>
-            </div>
+        <Link to="/cart" className="hover:text-gray-300">
+          Cart ({itemCount})
+        </Link>
+      </div>
 
-            <div>
-                {user ? (
-                    <>
-                        <span style={{ marginRight: "10px" }}>
-                            Hello, {user.name}
-                        </span>
+      <div>
+        {user ? (
+          <div className="flex items-center gap-4">
+            <span className="text-sm">Hello {user.name}</span>
 
-                        <button onClick={logout}>
-                            Logout
-                        </button>
-                    </>
-                ) : (
-                    <Link to="/login">
-                        Login
-                    </Link>
-                )}
-            </div>
-        </nav>
-    );
+            <button
+              onClick={logout}
+              className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded"
+          >
+            Login
+          </Link>
+        )}
+      </div>
+    </nav>
+  );
 }
