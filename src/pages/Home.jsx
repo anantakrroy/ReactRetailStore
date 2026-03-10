@@ -49,9 +49,11 @@ export default function Home() {
                             onClick={() =>
                                 dispatch({
                                     type: "ADD_ITEM",
-                                    payload: product,
-                                })
-                            }
+                                    payload: {
+                                        ...product,
+                                        quantity: 1,
+                                    },
+                                })}
                             className="mt-3 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
                         >
                             Add to Cart
