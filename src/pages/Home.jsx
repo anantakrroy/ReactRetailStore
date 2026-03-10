@@ -1,87 +1,64 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useCart } from "../features/cart/useCart";
+import Loader from "../components/Loader";
+import ErrorMessage from "../components/ErrorMessage";
 
 async function fetchProducts() {
-  const response = await fetch("https://fakestoreapi.com/products");
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch products");
-  }
-
-  return response.json();
+    const res = await fetch("https://fakestoreapi.com/products");
+    if (!res.ok) throw new Error("Failed to fetch products");
+    return res.json();
 }
 
 export default function Home() {
-  const { dispatch } = useCart();
+    const { dispatch } = useCart();
 
-  const {
-    data: products,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
-  });
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ["products"],
+        queryFn: fetchProducts,
+    });
 
-  if (isLoading) {
-    return <p>Loading products...</p>;
-  }
+    if (isLoading) return <Loader />;
+    if (isError) return <ErrorMessage message={error.message} />;
 
-  if (isError) {
-    return <p>Error: {error.message}</p>;
-  }
+    return (
+        <div className="max-w-6xl mx-auto mt-8 px-4">
+            <h1 className="text-3xl font-bold mb-6">Products</h1>
 
-  if (!products || products.length === 0) {
-    return <p>No products available.</p>;
-  }
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {data.map((product) => (
+                    <div
+                        key={product.id}
+                        className="border rounded-lg p-4 shadow hover:shadow-lg transition flex flex-col"
+                    >
+                        <Link to={`/products/${product.id}`} className="flex-1">
+                            <img
+                                src={product.image}
+                                alt={product.title}
+                                className="h-40 mx-auto object-contain"
+                            />
 
-  return (
-    <div>
-      <h1>Product Catalog</h1>
+                            <h3 className="mt-3 font-semibold line-clamp-2">
+                                {product.title}
+                            </h3>
+                        </Link>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px",
-        }}
-      >
-        {products.map((product) => (
-          <div
-            key={product.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "15px",
-              borderRadius: "5px",
-            }}
-          >
-            <Link to={`/products/${product.id}`}>
-              <h3>{product.title}</h3>
-            </Link>
+                        <p className="mt-2 font-bold">${product.price}</p>
 
-            <img
-              src={product.image}
-              alt={product.title}
-              style={{ width: "100px", height: "100px", objectFit: "contain" }}
-            />
-
-            <p>${product.price}</p>
-
-            <button
-              onClick={() =>
-                dispatch({
-                  type: "ADD_ITEM",
-                  payload: product,
-                })
-              }
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+                        <button
+                            onClick={() =>
+                                dispatch({
+                                    type: "ADD_ITEM",
+                                    payload: product,
+                                })
+                            }
+                            className="mt-3 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
+                        >
+                            Add to Cart
+                        </button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 }
