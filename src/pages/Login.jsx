@@ -54,7 +54,7 @@ export default function Login() {
             type="submit"
             className="bg-green-400 hover:bg-green-600 text-white font-semibold py-2 rounded-md transition"
           >
-            Login
+            Log In
           </button>
 
         </form>
