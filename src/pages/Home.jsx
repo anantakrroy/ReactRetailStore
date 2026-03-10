@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../features/cart/useCart";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
+import toast from "react-hot-toast";
 
 async function fetchProducts() {
     const res = await fetch("https://fakestoreapi.com/products");
@@ -20,6 +21,14 @@ export default function Home() {
 
     if (isLoading) return <Loader />;
     if (isError) return <ErrorMessage message={error.message} />;
+
+    function addToCart(product) {
+        dispatch({
+            type: "ADD_ITEM",
+            payload: { ...product, quantity: 1 },
+        });
+        toast.success("Item added to cart!");
+    }
 
     return (
         <div className="max-w-6xl mx-auto mt-8 px-4">
@@ -46,14 +55,7 @@ export default function Home() {
                         <p className="mt-2 font-bold">${product.price}</p>
 
                         <button
-                            onClick={() =>
-                                dispatch({
-                                    type: "ADD_ITEM",
-                                    payload: {
-                                        ...product,
-                                        quantity: 1,
-                                    },
-                                })}
+                            onClick={() => addToCart(product)}
                             className="mt-3 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
                         >
                             Add to Cart
