@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useCart } from "../features/cart/useCart";
+import { useAuth } from "../features/auth/useAuth";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import toast from "react-hot-toast";
@@ -12,6 +13,7 @@ async function fetchProducts() {
 }
 
 export default function Home() {
+    const { user } = useAuth();
     const { dispatch } = useCart();
 
     const { data, isLoading, isError, error } = useQuery({
@@ -23,6 +25,11 @@ export default function Home() {
     if (isError) return <ErrorMessage message={error.message} />;
 
     function addToCart(product) {
+        // Only allow adding to cart if user is logged in
+        if (!user) {
+            toast.error("Please login to add items to cart");
+            return;
+        }
         dispatch({
             type: "ADD_ITEM",
             payload: { ...product, quantity: 1 },
