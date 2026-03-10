@@ -8,31 +8,33 @@ import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProductDetail from "./pages/ProductDetail";
+import OrderSuccess from "./pages/OrderSuccess";
 
 function App() {
-  return (
-    <div>
-      <Navbar />
+    return (
+        <div>
+            <Navbar />
 
-      <div style={{ padding: "20px" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
+            <div style={{ padding: "20px" }}>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/products/:id" element={<ProductDetail />} />
+                    <Route path="/cart" element={<Cart />} />
 
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </div>
-    </div>
-  );
+                    <Route
+                        path="/checkout"
+                        element={
+                            <ProtectedRoute>
+                                <Checkout />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="/order-success" element={<OrderSuccess />} />
+                </Routes>
+            </div>
+        </div>
+    );
 }
 
 export default App;
