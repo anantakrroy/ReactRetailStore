@@ -16,9 +16,9 @@ export function cartReducer(state, action) {
           items: state.items.map((item) =>
             item.id === action.payload.id
               ? {
-                  ...item,
-                  quantity: item.quantity + action.payload.quantity,
-                }
+                ...item,
+                quantity: item.quantity + action.payload.quantity,
+              }
               : item
           ),
         };
@@ -56,6 +56,13 @@ export function cartReducer(state, action) {
         items: state.items.filter(
           (item) => item.id !== action.payload
         ),
+      };
+
+    case "CLEAR_CART":
+      localStorage.removeItem("cart");
+      return {
+        ...state,
+        items: []
       };
 
     default:

@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useCart } from "../features/cart/useCart";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const {dispatch} = useCart();
   const [form, setForm] = useState({
     name: "",
     email: "",
