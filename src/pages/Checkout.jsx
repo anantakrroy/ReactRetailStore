@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useOrderMutation } from "../hooks/useOrderMutation";
 import { useCart } from "../features/cart/useCart";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const {dispatch} = useCart();
+  const { mutate, isLoading } = useOrderMutation();
+  const { state, dispatch } = useCart();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -42,27 +44,37 @@ export default function Checkout() {
     }
 
     if (!validateEmail(form.email)) {
-      toast.error("Enter a valid email");
+      toast.error("Enter valid email");
       return;
     }
 
     if (!form.address.trim()) {
-      toast.error("Address is required");
+      toast.error("Address required");
       return;
     }
 
-    if (
-      form.paymentMethod === "credit" &&
-      !validateCard(form.cardNumber)
-    ) {
-      toast.error("Enter a valid credit card number");
-      return;
-    }
+    mutate(
+      {
+        user: form,
+        items: state.items,
+        total: state.items.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        ),
+      },
+      {
+        onSuccess: () => {
+          toast.success("Order placed!");
 
-    toast.success("Order placed successfully!");
+          dispatch({ type: "CLEAR_CART" });
 
-    navigate("/order-success");
-    dispatch({ type: "CLEAR_CART" });
+          navigate("/order-success");
+        },
+        onError: () => {
+          toast.error("Order failed");
+        },
+      }
+    );
   }
 
   return (
@@ -72,6 +84,8 @@ export default function Checkout() {
         <h2 className="text-3xl font-bold mb-6">
           Checkout
         </h2>
+
+        
 
         <form
           onSubmit={handleSubmit}
@@ -162,10 +176,10 @@ export default function Checkout() {
           )}
 
           <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-md font-semibold transition"
+            disabled={isLoading}
+            className="bg-blue-500 disabled:bg-gray-400 text-white py-3 rounded"
           >
-            Place Order
+            {isLoading ? "Placing Order..." : "Place Order"}
           </button>
 
         </form>
