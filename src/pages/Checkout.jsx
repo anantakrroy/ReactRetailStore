@@ -85,7 +85,26 @@ export default function Checkout() {
           Checkout
         </h2>
 
-        
+        <div className="mb-6 border p-4 rounded bg-gray-50">
+          <h3 className="font-bold mb-2">Order Summary</h3>
+
+          {state.items.map((item) => (
+            <div key={item.id} className="flex justify-between text-sm mb-1">
+              <span>{item.title} x {item.quantity}</span>
+              <span>${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
+          ))}
+
+          <div className="flex justify-between font-bold mt-2">
+            <span>Total</span>
+            <span>
+              $
+              {state.items
+                .reduce((sum, i) => sum + i.price * i.quantity, 0)
+                .toFixed(2)}
+            </span>
+          </div>
+        </div>
 
         <form
           onSubmit={handleSubmit}
