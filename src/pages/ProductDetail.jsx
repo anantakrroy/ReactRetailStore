@@ -6,16 +6,8 @@ import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { fetchProduct } from "../features/products/api";
 
-async function fetchProduct(id) {
-    const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch product");
-    }
-
-    return res.json();
-}
 
 export default function ProductDetail() {
     const { user } = useAuth();

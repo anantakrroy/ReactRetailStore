@@ -5,12 +5,8 @@ import { useAuth } from "../features/auth/useAuth";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import toast from "react-hot-toast";
+import { fetchProducts } from "../features/products/api";
 
-async function fetchProducts() {
-    const res = await fetch("https://fakestoreapi.com/products");
-    if (!res.ok) throw new Error("Failed to fetch products");
-    return res.json();
-}
 
 export default function Home() {
     const { user } = useAuth();
